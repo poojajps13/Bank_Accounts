@@ -10,14 +10,21 @@ from .serializers import *
 class FetchUserData(APIView):
 
 	def get(self, request):
+		
 		try:
 			data = requests.get('https://arkneofinance.com/api/sample_credit_report')
 			user_info = data.json()
 			user_info = user_info['data']
 			account_infos = user_info['accounts']
+
 			for account_info in account_infos:
-				account_info['date_opened'] = datetime.datetime.strptime(account_info['date_opened'], "%d-%m-%Y").strftime("%Y-%m-%d")
-				account_info['date_reported'] = datetime.datetime.strptime(account_info['date_reported'], "%d-%m-%Y").strftime("%Y-%m-%d")	
+				account_info['date_opened'] = datetime.datetime.strptime(
+																	account_info['date_opened'], "%d-%m-%Y"
+																	).strftime("%Y-%m-%d")
+				account_info['date_reported'] = datetime.datetime.strptime(
+																	account_info['date_reported'], "%d-%m-%Y"
+																	).strftime("%Y-%m-%d")	
+		
 		except Exception as e:
 			return Response(
 					{
@@ -25,7 +32,9 @@ class FetchUserData(APIView):
 					},
 					status = status.HTTP_400_BAD_REQUEST
 			)
+		
 		serializer = UserSerializer(data=user_info)
+		
 		if serializer.is_valid(raise_exception=ValueError):
 			serializer.create(validated_data=user_info)
 			return Response(
@@ -41,6 +50,14 @@ class FetchUserData(APIView):
 
 
 class ViewUserData(APIView):
+
 	def get(self, request):
 		user = User.objects.all()
-		return render(request, 'UserAccount/user_info.html', {'user':user})
+		return render(
+						request, 
+						'UserAccount/user_info.html', 
+						{'user':user}
+					)
+
+
+

@@ -37,9 +37,12 @@ class UserSerializer(serializers.ModelSerializer):
 	def create(self, validated_data):
 		accounts_data = validated_data.pop('accounts')
 		user_new = User.objects.create(**validated_data)
+		
 		if user_new:
+			
 			for account_data in accounts_data:
 				account_new = Account.objects.create(user=user_new, **account_data)
+
 		return user_new
 
 
