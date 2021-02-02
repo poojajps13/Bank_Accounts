@@ -8,6 +8,7 @@ from .models import User, Account
 from .serializers import *
 
 class FetchUserData(APIView):
+
 	def get(self, request):
 		try:
 			data = requests.get('https://arkneofinance.com/api/sample_credit_report')
@@ -16,8 +17,7 @@ class FetchUserData(APIView):
 			account_infos = user_info['accounts']
 			for account_info in account_infos:
 				account_info['date_opened'] = datetime.datetime.strptime(account_info['date_opened'], "%d-%m-%Y").strftime("%Y-%m-%d")
-				account_info['date_reported'] = datetime.datetime.strptime(account_info['date_reported'], "%d-%m-%Y").strftime("%Y-%m-%d")
-			
+				account_info['date_reported'] = datetime.datetime.strptime(account_info['date_reported'], "%d-%m-%Y").strftime("%Y-%m-%d")	
 		except Exception as e:
 			return Response(
 					{
@@ -38,3 +38,9 @@ class FetchUserData(APIView):
 						serializer.error_messages,
                         status=status.HTTP_400_BAD_REQUEST
                     )
+
+
+class ViewUserData(APIView):
+	def get(self, request):
+		user = User.objects.all()
+		return render(request, 'UserAccount/user_info.html', {'user':user})

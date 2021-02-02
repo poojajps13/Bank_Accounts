@@ -42,3 +42,4 @@ class UserSerializer(serializers.ModelSerializer):
 				account_new = Account.objects.create(user=user_new, **account_data)
 		return user_new
 
+
